@@ -1,60 +1,67 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: feedback-deployment
-  labels:
-    app: feedback
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: feedback
-  template:
-    metadata:
-      labels:
+    name: feedback-deployment
+    labels:
         app: feedback
-    spec:
-      containers:
-        - name: feedback
-          image: benukapunchihewa/feedback-service:latest
-          imagePullPolicy: Always
-          ports:
-            - containerPort: 5001
-          env:
-            - name: MONGO_URL
-              valueFrom:
-                configMapKeyRef:
-                  name: feedback-config
-                  key: mongo-url
-            - name: SERVICE_ACCESS_TOKEN
-              valueFrom:
-                configMapKeyRef:
-                  name: feedback-config
-                  key: service-access-token
-            - name: AUTH_SERVICE_BASE_URL
-              valueFrom:
-                configMapKeyRef:
-                  name: feedback-config
-                  key: auth-service-base-url
-            - name: USER_SERVICE_BASE_URL
-              valueFrom:
-                configMapKeyRef:
-                  name: feedback-config
-                  key: user-service-base-url
-            - name: PRODUCT_SERVICE_BASE_URL
-              valueFrom:
-                configMapKeyRef:
-                  name: feedback-config
-                  key: product-service-base-url
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            app: feedback
+    template:
+        metadata:
+            labels:
+                app: feedback
+        spec:
+            containers:
+                - name: feedback
+                  image: benukapunchihewa/feedback-service:latest
+                  imagePullPolicy: Always
+                  resources:
+                      requests:
+                          memory: "250Mi"
+                          cpu: "150m"
+                      limits:
+                          memory: "500Mi"
+                          cpu: "200m"
+                  ports:
+                      - containerPort: 5001
+                  env:
+                      - name: MONGO_URL
+                        valueFrom:
+                            configMapKeyRef:
+                                name: feedback-config
+                                key: mongo-url
+                      - name: SERVICE_ACCESS_TOKEN
+                        valueFrom:
+                            configMapKeyRef:
+                                name: feedback-config
+                                key: service-access-token
+                      - name: AUTH_SERVICE_BASE_URL
+                        valueFrom:
+                            configMapKeyRef:
+                                name: feedback-config
+                                key: auth-service-base-url
+                      - name: USER_SERVICE_BASE_URL
+                        valueFrom:
+                            configMapKeyRef:
+                                name: feedback-config
+                                key: user-service-base-url
+                      - name: PRODUCT_SERVICE_BASE_URL
+                        valueFrom:
+                            configMapKeyRef:
+                                name: feedback-config
+                                key: product-service-base-url
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: feedback-service
+    name: feedback-service
 spec:
-  selector:
-    app: feedback
-  ports:
-    - protocol: TCP
-      port: 5006
-      targetPort: 5001
+    selector:
+        app: feedback
+    ports:
+        - protocol: TCP
+          port: 5006
+          targetPort: 5001
